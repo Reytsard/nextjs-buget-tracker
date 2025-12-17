@@ -1,6 +1,4 @@
-"use client";
-import { LoginForm } from "@/components/login-form";
-import { useState } from "react";
+import { LoginForm } from '@/components/login-form'
 
 export default function Page() {
   return (
@@ -9,5 +7,5 @@ export default function Page() {
         <LoginForm />
       </div>
     </div>
-  );
+  )
 }
