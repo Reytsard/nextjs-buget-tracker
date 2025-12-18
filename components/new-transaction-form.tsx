@@ -66,13 +66,13 @@ export async function NewTransactionForm({
               </Select>
             </Field>
             {/* <Field>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <Input id="password" type="password" required />
+              <FieldLabel htmlFor="Category">Category</FieldLabel>
+              <Input id="Category" type="Category" required />
               <FieldDescription>
                 Must be at least 8 characters long.
               </FieldDescription>
-            </Field>
-            <Field>
+            </Field> */}
+            {/* <Field>
               <FieldLabel htmlFor="confirm-password">
                 Confirm Password
               </FieldLabel>
