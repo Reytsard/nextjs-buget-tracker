@@ -8,6 +8,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import data1 from "./data.json";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
+import { Transaction } from "../types/Types";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -16,6 +17,13 @@ export default async function Page() {
   if (error || !data?.claims) {
     redirect("/auth/login");
   }
+
+  const transactions = await supabase
+    .from("transaction")
+    .select("*")
+    .limit(10)
+    .order("created_at", { ascending: false });
+
   return (
     <SidebarProvider
       style={

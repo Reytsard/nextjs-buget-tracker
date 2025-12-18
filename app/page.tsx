@@ -9,6 +9,6 @@ export default async function Home() {
   if (error || !data?.claims) {
     redirect("/auth/login");
   } else {
-    redirect("/home");
+    redirect("/dashboard");
   }
 }
