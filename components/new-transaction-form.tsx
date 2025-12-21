@@ -22,31 +22,63 @@ import {
   SelectValue,
 } from "./ui/select";
 import { createClient } from "@/lib/server";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 
 export async function NewTransactionForm({
   ...props
 }: React.ComponentProps<typeof Card>) {
   const supabase = await createClient();
-  // const { data, error } = await supabase.auth.getClaims();
-  // const userId = data?.claims.user_metadata?.sub;
+  const { data, error } = await supabase.auth.getClaims();
+  const userId = data?.claims.user_metadata?.sub;
+  console.log(data);
   const types = await supabase.from("types").select("*");
+
+  const createRecord = async (formData: FormData) => {
+    "use server";
+    const value = formData.get("value");
+    const type = formData.get("type");
+    const supabase = await createClient();
+    const { data: record, error } = await supabase.from("transaction").insert([
+      {
+        value: Number(value),
+        type: String(type),
+        category: null,
+        created_at: new Date(),
+      },
+    ]);
+    console.log(data);
+    if (error) {
+      console.log("Error creating record:", error);
+    } else {
+      toast.success("Record created successfully!");
+      window.location.href = "/dashboard";
+    }
+  };
+
   return (
     <Card {...props}>
       <CardHeader>
+        <Link href="/dashboard">
+          <Button size="sm" className="w-[50px]">
+            <ChevronLeft />
+          </Button>
+        </Link>
         <CardTitle>New Transaction Record</CardTitle>
         <CardDescription>
           Enter your information below to create a new transaction.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form action={createRecord}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Value</FieldLabel>
               <Input id="name" type="number" placeholder="1000.25" required />
             </Field>
             <Field>
-              <FieldLabel htmlFor="email">Type</FieldLabel>
+              <FieldLabel htmlFor="type">Type</FieldLabel>
               <Select name="type" required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Type" />
@@ -55,10 +87,7 @@ export async function NewTransactionForm({
                   {/* values in select content, get it from database> */}
                   {types.data &&
                     types.data.map((type) => (
-                      <SelectItem
-                        key={type.value}
-                        value={type.value.toString()}
-                      >
+                      <SelectItem key={type.value} value={type.value}>
                         {type.value}
                       </SelectItem>
                     ))}
@@ -82,12 +111,6 @@ export async function NewTransactionForm({
             <FieldGroup>
               <Field>
                 <Button type="submit">Create Record</Button>
-                {/* <Button variant="outline" type="button">
-                  Sign up with Google
-                </Button> */}
-                <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/login">Sign in</a>
-                </FieldDescription>
               </Field>
             </FieldGroup>
           </FieldGroup>
