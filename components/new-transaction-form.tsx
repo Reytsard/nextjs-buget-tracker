@@ -26,6 +26,7 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import FormSubmitButton from "./form-submit-button";
+import { Value } from "@radix-ui/react-select";
 
 export async function NewTransactionForm({
   ...props
@@ -35,7 +36,7 @@ export async function NewTransactionForm({
 
   const createRecord = async (formData: FormData) => {
     "use server";
-    const value = formData.get("value");
+    const value = Number(formData.get("value"));
     const typeValue = formData.get("type");
     const supabase = await createClient();
     const { data: type, error: typeError } = await supabase
@@ -43,13 +44,10 @@ export async function NewTransactionForm({
       .select("id")
       .eq("value", typeValue)
       .single();
-    console.log("type id ", type?.id);
-    const { error } = await supabase.from("transactions").insert([
-      {
-        value: Number(value),
-        type_id: type!.id,
-      },
-    ]);
+    const { error } = await supabase.from("transactions").insert({
+      value: value,
+      type_id: type!.id,
+    });
     if (!error) {
       redirect("/dashboard?success=transaction-created");
     }
@@ -73,7 +71,13 @@ export async function NewTransactionForm({
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="value">Value</FieldLabel>
-              <Input id="value" type="number" placeholder="1000.25" required />
+              <Input
+                id="value"
+                name="value"
+                type="number"
+                placeholder="123.45"
+                required
+              />
             </Field>
             <Field>
               <FieldLabel htmlFor="type">Type</FieldLabel>

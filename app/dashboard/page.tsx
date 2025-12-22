@@ -24,7 +24,13 @@ export default async function Page() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  console.log("Transactions:", transactions);
+  console.log(transactions);
+  const total = await transactions.reduce(
+    (a: any, b: any) => (b.type_id == 2 ? a - b.value : a + b.value),
+    0
+  );
+  console.log(total);
+
   return (
     <SidebarProvider
       style={
