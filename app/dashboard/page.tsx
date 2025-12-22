@@ -8,7 +8,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import data1 from "./data.json";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
-import { Transaction } from "../types/Types";
 import { DashboardToast } from "@/components/dashboard-toast";
 
 export default async function Page() {
@@ -21,15 +20,18 @@ export default async function Page() {
 
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  console.log(transactions);
-  const total = await transactions.reduce(
-    (a: any, b: any) => (b.type_id == 2 ? a - b.value : a + b.value),
-    0
-  );
-  console.log(total);
+    .select("*");
+  const chartData = transactions?.map((transaction) => ({
+    x: transaction.created_at,
+    y: transaction.value,
+    type: transaction.type_id,
+  }));
+  const savingsData = chartData
+    ?.filter((item) => item.type === 1)
+    .map((item: any) => ({ x: item.created_at, y: item.value }));
+  const expenseData = chartData
+    ?.filter((item) => item.type === 2)
+    .map((item: any) => ({ x: item.created_at, y: item.value }));
 
   return (
     <SidebarProvider
@@ -47,10 +49,10 @@ export default async function Page() {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data1} />
+              {/* <div className="px-4 lg:px-6">
+                <ChartAreaInteractive data={chartAreaData} />
+              </div> */}
+              <DataTable data={transactions!} />
             </div>
           </div>
         </div>
