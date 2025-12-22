@@ -24,7 +24,7 @@ import {
 import { createClient } from "@/lib/server";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { toast } from "sonner";
+import { redirect } from "next/navigation";
 
 export async function NewTransactionForm({
   ...props
@@ -38,22 +38,22 @@ export async function NewTransactionForm({
   const createRecord = async (formData: FormData) => {
     "use server";
     const value = formData.get("value");
-    const type = formData.get("type");
+    const typeValue = formData.get("type");
     const supabase = await createClient();
-    const { data: record, error } = await supabase.from("transaction").insert([
+    const { data: type, error: typeError } = await supabase
+      .from("types")
+      .select("id")
+      .eq("value", typeValue)
+      .single();
+    console.log("type id ", type?.id);
+    const { error } = await supabase.from("transactions").insert([
       {
         value: Number(value),
-        type: String(type),
-        category: null,
-        created_at: new Date(),
+        type_id: type!.id,
       },
     ]);
-    console.log(data);
-    if (error) {
-      console.log("Error creating record:", error);
-    } else {
-      toast.success("Record created successfully!");
-      window.location.href = "/dashboard";
+    if (!error) {
+      redirect("/dashboard?success=transaction-created");
     }
   };
 
@@ -74,8 +74,8 @@ export async function NewTransactionForm({
         <form action={createRecord}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="name">Value</FieldLabel>
-              <Input id="name" type="number" placeholder="1000.25" required />
+              <FieldLabel htmlFor="value">Value</FieldLabel>
+              <Input id="value" type="number" placeholder="1000.25" required />
             </Field>
             <Field>
               <FieldLabel htmlFor="type">Type</FieldLabel>

@@ -9,6 +9,7 @@ import data1 from "./data.json";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
 import { Transaction } from "../types/Types";
+import { DashboardToast } from "@/components/dashboard-toast";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -48,6 +49,7 @@ export default async function Page() {
           </div>
         </div>
       </SidebarInset>
+      <DashboardToast />
     </SidebarProvider>
   );
 }
