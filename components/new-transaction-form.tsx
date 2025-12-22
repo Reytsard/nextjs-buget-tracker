@@ -25,14 +25,12 @@ import { createClient } from "@/lib/server";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import FormSubmitButton from "./form-submit-button";
 
 export async function NewTransactionForm({
   ...props
 }: React.ComponentProps<typeof Card>) {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
-  const userId = data?.claims.user_metadata?.sub;
-  console.log(data);
   const types = await supabase.from("types").select("*");
 
   const createRecord = async (formData: FormData) => {
@@ -110,7 +108,7 @@ export async function NewTransactionForm({
             </Field> */}
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Record</Button>
+                <FormSubmitButton />
               </Field>
             </FieldGroup>
           </FieldGroup>

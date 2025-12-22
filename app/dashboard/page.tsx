@@ -19,12 +19,12 @@ export default async function Page() {
     redirect("/auth/login");
   }
 
-  const transactions = await supabase
-    .from("transaction")
+  const { data: transactions } = await supabase
+    .from("transactions")
     .select("*")
-    .limit(10)
     .order("created_at", { ascending: false });
 
+  console.log("Transactions:", transactions);
   return (
     <SidebarProvider
       style={
