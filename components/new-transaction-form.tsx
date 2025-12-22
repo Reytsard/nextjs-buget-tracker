@@ -84,7 +84,7 @@ export async function NewTransactionForm({
                 <SelectContent>
                   {/* values in select content, get it from database> */}
                   {types.data &&
-                    types.data.map((type) => (
+                    types.data.map((type: any) => (
                       <SelectItem key={type.value} value={type.value}>
                         {type.value}
                       </SelectItem>
