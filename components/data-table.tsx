@@ -422,16 +422,18 @@ export function DataTable({ data: initialData }: { data: any[] }) {
             <SelectItem value="Emergency Savings">Emergency Savings</SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+        {/* <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="all">Outline</TabsTrigger>
           <TabsTrigger value="Savings">
+            Savings
             Savings <Badge variant="secondary">3</Badge>
           </TabsTrigger>
           <TabsTrigger value="Expenses">
+            Expenses
             Expenses <Badge variant="secondary">2</Badge>
           </TabsTrigger>
           <TabsTrigger value="Emergency Savings">Emergency Savings</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
