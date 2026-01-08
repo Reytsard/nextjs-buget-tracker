@@ -165,7 +165,7 @@ export function ChartAreaInteractive({
     return date >= startDate;
   });
 
-  console.log(filteredData);
+  // console.log(filteredData);
 
   return (
     <Card className="@container/card">

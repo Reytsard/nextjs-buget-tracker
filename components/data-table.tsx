@@ -184,7 +184,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
 
   async function handleDeleteTransaction(id: number) {
     // Implement your delete logic here
-    console.log(`Delete transaction with id: ${id}`);
+    // console.log(`Delete transaction with id: ${id}`);
     const supabase = await createClient();
     const response = await supabase.from("transactions").delete().eq("id", id);
     if (response.error) {
@@ -192,7 +192,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
     } else {
       setData((prevData) => prevData.filter((item) => item.id !== id));
       toast.success("Transaction deleted successfully");
-      console.log("Transaction deleted");
+      // console.log("Transaction deleted");
       // Optionally, you can refresh the page or update the state to reflect the deletion
       // redirect("/");
     }
