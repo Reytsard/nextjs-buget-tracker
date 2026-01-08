@@ -3,20 +3,16 @@
 import * as React from "react";
 import {
   IconCamera,
-  IconChartBar,
   IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
 
 import { NavDocuments } from "@/components/nav-documents";
@@ -35,9 +31,9 @@ import {
 
 const data = {
   user: {
-    name: "shadcn",
+    // name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    // avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
     {
@@ -150,7 +146,11 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  userdata: { name: string; email: string; avatar: string };
+}) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -174,7 +174,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={props.userdata} />
       </SidebarFooter>
     </Sidebar>
   );

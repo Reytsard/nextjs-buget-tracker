@@ -18,6 +18,12 @@ export default async function Page() {
     redirect("/auth/login");
   }
 
+  const userData = {
+    name: data?.claims.user_name || "",
+    email: data?.claims.email!,
+    avatar: data?.claims.user_avatar || "",
+  };
+
   const { data: transactions } = await supabase
     .from("transactions")
     .select("*");
@@ -42,7 +48,7 @@ export default async function Page() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" userdata={userData} />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
