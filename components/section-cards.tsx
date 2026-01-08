@@ -77,8 +77,10 @@ export async function SectionCards() {
             Down 20% this period <IconTrendingDown className="size-4" />
           </div> */}
           <div className="text-muted-foreground">
-            {thisMonthsPnL > 0
+            {thisMonthsPnL >= 1
               ? "Positive cash flow this month"
+              : thisMonthsPnL === 0
+              ? ""
               : "Negative cash flow this month"}
           </div>
         </CardFooter>

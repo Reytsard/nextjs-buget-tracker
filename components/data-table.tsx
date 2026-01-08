@@ -100,6 +100,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createClient } from "@/lib/client";
 import { redirect } from "next/navigation";
 
 export const schema = z.object({
@@ -130,193 +131,6 @@ function DragHandle({ id }: { id: number }) {
     </Button>
   );
 }
-
-function handleDeleteTransaction(id: number) {
-  // Implement your delete logic here
-  console.log(`Delete transaction with id: ${id}`);
-}
-
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  // {
-  //   id: "drag",
-  //   header: () => null,
-  //   cell: ({ row }) => <DragHandle id={row.original.id} />,
-  // },
-  // {
-  //   id: "select",
-  //   header: ({ table }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={
-  //           table.getIsAllPageRowsSelected() ||
-  //           (table.getIsSomePageRowsSelected() && "indeterminate")
-  //         }
-  //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-  //         aria-label="Select all"
-  //       />
-  //     </div>
-  //   ),
-  //   cell: ({ row }) => (
-  //     <div className="flex items-center justify-center">
-  //       <Checkbox
-  //         checked={row.getIsSelected()}
-  //         onCheckedChange={(value) => row.toggleSelected(!!value)}
-  //         aria-label="Select row"
-  //       />
-  //     </div>
-  //   ),
-  //   enableSorting: false,
-  //   enableHiding: false,
-  // },
-  // {
-  //   accessorKey: "header",
-  //   header: "Header",
-  //   cell: ({ row }) => {
-  //     return <TableCellViewer item={row.original} />;
-  //   },
-  //   enableHiding: false,
-  // },
-  {
-    accessorKey: "type_id",
-    header: "Type",
-    cell: ({ row }: { row: any }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {Number(row.original.type_id) === 1
-            ? "Savings"
-            : Number(row.original.type_id) === 2
-            ? "Expenses"
-            : "Emergency Savings"}
-        </Badge>
-      </div>
-    ),
-  },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  //   cell: ({ row }) => (
-  //     <Badge variant="outline" className="text-muted-foreground px-1.5">
-  //       {/* {row.original.status === "Done" ? (
-  //         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-  //       ) : (
-  //         <IconLoader />
-  //       )}
-  //       {row.original.status} */}
-  //     </Badge>
-  //   ),
-  // },
-  {
-    accessorKey: "target",
-    header: () => <div className="w-full">Value</div>,
-    cell: ({ row }: any) => <Label>{row.original.value}</Label>,
-    //   <form
-    //     onSubmit={(e) => {
-    //       e.preventDefault();
-    //       toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-    //         loading: `Saving "######"`,
-    //         success: "Done",
-    //         error: "Error",
-    //       });
-    //     }}
-    //   >
-    //     <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-    //       Target
-    //     </Label>
-    //     <Input
-    //       className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-    //       defaultValue={"######"}
-    //       id={`${row.original.id}-target`}
-    //     />
-    //   </form>
-    // ),
-  },
-  // {
-  //   accessorKey: "limit",
-  //   header: () => <div className="w-full text-right">Limit</div>,
-  //   cell: ({ row }) => (
-  //     <form
-  //       onSubmit={(e) => {
-  //         e.preventDefault();
-  //         toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-  //           loading: `Saving "######"`,
-  //           success: "Done",
-  //           error: "Error",
-  //         });
-  //       }}
-  //     >
-  //       <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-  //         Limit
-  //       </Label>
-  //       <Input
-  //         className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-  //         defaultValue={"######"}
-  //         id={`${row.original.id}-limit`}
-  //       />
-  //     </form>
-  //   ),
-  // },
-  {
-    accessorKey: "reviewer",
-    header: "Date",
-    cell: ({ row }) => {
-      console.log("date", row);
-      // const isAssigned = row.original.reviewer !== "Assign reviewer";
-
-      //     // if (isAssigned) {
-      //     //   return row.original.reviewer;
-      //     // }
-
-      const date = new Date(row.original.created_at);
-      return (
-        <Label>{`${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`}</Label>
-        // <>
-        //   <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-        //     Reviewer
-        //   </Label>
-        //   <Select>
-        //     <SelectTrigger
-        //       className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-        //       size="sm"
-        //       id={`${row.original.id}-reviewer`}
-        //     >
-        //       <SelectValue placeholder="Assign reviewer" />
-        //     </SelectTrigger>
-        //     <SelectContent align="end">
-        //       <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-        //       <SelectItem value="Jamik Tashpulatov">
-        //         Jamik Tashpulatov
-        //       </SelectItem>
-        //     </SelectContent>
-        //   </Select>
-        // </>
-      );
-    },
-  },
-  // {
-  //   id: "actions",
-  //   cell: () => (
-  //     <DropdownMenu>
-  //       <DropdownMenuTrigger asChild>
-  //         <Button
-  //           variant="ghost"
-  //           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-  //           size="icon"
-  //         >
-  //           <IconDotsVertical />
-  //           <span className="sr-only">Open menu</span>
-  //         </Button>
-  //       </DropdownMenuTrigger>
-  //       <DropdownMenuContent align="end" className="w-32">
-  //         <DropdownMenuItem>Edit</DropdownMenuItem>
-  //         <DropdownMenuItem>Make a copy</DropdownMenuItem>
-  //         <DropdownMenuItem>Favorite</DropdownMenuItem>
-  //         <DropdownMenuSeparator />
-  //         <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-  //       </DropdownMenuContent>
-  //     </DropdownMenu>
-  //   ),
-  // },
-];
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -367,6 +181,217 @@ export function DataTable({ data: initialData }: { data: any[] }) {
     () => data?.map(({ id }) => id) || [],
     [data]
   );
+
+  async function handleDeleteTransaction(id: number) {
+    // Implement your delete logic here
+    console.log(`Delete transaction with id: ${id}`);
+    const supabase = await createClient();
+    const response = await supabase.from("transactions").delete().eq("id", id);
+    if (response.error) {
+      console.error("Error deleting transaction:", response.error);
+    } else {
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+      toast.success("Transaction deleted successfully");
+      console.log("Transaction deleted");
+      // Optionally, you can refresh the page or update the state to reflect the deletion
+      // redirect("/");
+    }
+  }
+
+  const columns: ColumnDef<z.infer<typeof schema>>[] = [
+    {
+      accessorKey: "type_id",
+      header: "Type",
+      cell: ({ row }: { row: any }) => (
+        <div className="w-32">
+          <Badge variant="outline" className="text-muted-foreground px-1.5">
+            {Number(row.original.type_id) === 1
+              ? "Savings"
+              : Number(row.original.type_id) === 2
+              ? "Expenses"
+              : "Emergency Savings"}
+          </Badge>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "target",
+      header: () => <div className="w-full">Value</div>,
+      cell: ({ row }: any) => <Label>{row.original.value}</Label>,
+      //   <form
+      //     onSubmit={(e) => {
+      //       e.preventDefault();
+      //       toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
+      //         loading: `Saving "######"`,
+      //         success: "Done",
+      //         error: "Error",
+      //       });
+      //     }}
+      //   >
+      //     <Label htmlFor={`${row.original.id}-target`} className="sr-only">
+      //       Target
+      //     </Label>
+      //     <Input
+      //       className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
+      //       defaultValue={"######"}
+      //       id={`${row.original.id}-target`}
+      //     />
+      //   </form>
+      // ),
+    },
+    {
+      accessorKey: "reviewer",
+      header: "Date",
+      cell: ({ row }) => {
+        // console.log("data", row);
+        // const isAssigned = row.original.reviewer !== "Assign reviewer";
+
+        //     // if (isAssigned) {
+        //     //   return row.original.reviewer;
+        //     // }
+
+        const date = new Date(row.original.created_at);
+        return (
+          <Label>{`${
+            date.getMonth() + 1
+          }-${date.getDate()}-${date.getFullYear()}`}</Label>
+          // <>
+          //   <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
+          //     Reviewer
+          //   </Label>
+          //   <Select>
+          //     <SelectTrigger
+          //       className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
+          //       size="sm"
+          //       id={`${row.original.id}-reviewer`}
+          //     >
+          //       <SelectValue placeholder="Assign reviewer" />
+          //     </SelectTrigger>
+          //     <SelectContent align="end">
+          //       <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
+          //       <SelectItem value="Jamik Tashpulatov">
+          //         Jamik Tashpulatov
+          //       </SelectItem>
+          //     </SelectContent>
+          //   </Select>
+          // </>
+        );
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const id = row.original.id;
+        const newURL = `/transaction/${id}`;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
+                size="icon"
+              >
+                <IconDotsVertical />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-32">
+              <DropdownMenuItem onClick={() => redirect(newURL)}>
+                Edit
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>Make a copy</DropdownMenuItem>
+          <DropdownMenuItem>Favorite</DropdownMenuItem> */}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => handleDeleteTransaction(id)}
+              >
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+    // {
+    //   id: "drag",
+    //   header: () => null,
+    //   cell: ({ row }) => <DragHandle id={row.original.id} />,
+    // },
+    // {
+    //   id: "select",
+    //   header: ({ table }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={
+    //           table.getIsAllPageRowsSelected() ||
+    //           (table.getIsSomePageRowsSelected() && "indeterminate")
+    //         }
+    //         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //         aria-label="Select all"
+    //       />
+    //     </div>
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="flex items-center justify-center">
+    //       <Checkbox
+    //         checked={row.getIsSelected()}
+    //         onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //         aria-label="Select row"
+    //       />
+    //     </div>
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
+    // {
+    //   accessorKey: "header",
+    //   header: "Header",
+    //   cell: ({ row }) => {
+    //     return <TableCellViewer item={row.original} />;
+    //   },
+    //   enableHiding: false,
+    // },
+    // {
+    //   accessorKey: "limit",
+    //   header: () => <div className="w-full text-right">Limit</div>,
+    //   cell: ({ row }) => (
+    //     <form
+    //       onSubmit={(e) => {
+    //         e.preventDefault();
+    //         toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
+    //           loading: `Saving "######"`,
+    //           success: "Done",
+    //           error: "Error",
+    //         });
+    //       }}
+    //     >
+    //       <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
+    //         Limit
+    //       </Label>
+    //       <Input
+    //         className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
+    //         defaultValue={"######"}
+    //         id={`${row.original.id}-limit`}
+    //       />
+    //     </form>
+    //   ),
+    // },
+    // {
+    //   accessorKey: "status",
+    //   header: "Status",
+    //   cell: ({ row }) => (
+    //     <Badge variant="outline" className="text-muted-foreground px-1.5">
+    //       {/* {row.original.status === "Done" ? (
+    //         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
+    //       ) : (
+    //         <IconLoader />
+    //       )}
+    //       {row.original.status} */}
+    //     </Badge>
+    //   ),
+    // },
+  ];
 
   const table = useReactTable({
     data,
@@ -428,18 +453,16 @@ export function DataTable({ data: initialData }: { data: any[] }) {
             <SelectItem value="Emergency Savings">Emergency Savings</SelectItem>
           </SelectContent>
         </Select>
-        {/* <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="all">Outline</TabsTrigger>
           <TabsTrigger value="Savings">
-            Savings
-            Savings <Badge variant="secondary">3</Badge>
+            Savings Savings <Badge variant="secondary">3</Badge>
           </TabsTrigger>
           <TabsTrigger value="Expenses">
-            Expenses
-            Expenses <Badge variant="secondary">2</Badge>
+            Expenses Expenses <Badge variant="secondary">2</Badge>
           </TabsTrigger>
           <TabsTrigger value="Emergency Savings">Emergency Savings</TabsTrigger>
-        </TabsList> */}
+        </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -537,8 +560,8 @@ export function DataTable({ data: initialData }: { data: any[] }) {
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {/* {table.getFilteredSelectedRowModel().rows.length} of{" "} */}
+            {/* {table.getFilteredRowModel().rows.length} row(s) selected. */}
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
