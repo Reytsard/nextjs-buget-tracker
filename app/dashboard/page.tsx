@@ -9,6 +9,7 @@ import data1 from "./data.json";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
 import { DashboardToast } from "@/components/dashboard-toast";
+import { Transaction } from "../types/Types";
 
 export default async function Page() {
   const supabase = await createClient();
@@ -27,6 +28,38 @@ export default async function Page() {
   const { data: transactions } = await supabase
     .from("transactions")
     .select("*");
+
+  const getChartData = async (data: Transaction[]) =>
+    new Promise((resolve, reject) => {
+      try {
+        console.log("buh resolved");
+        resolve("buh");
+        // const hashSetDates = new Set();
+        // transactions?.forEach((transaction) => {
+        //   const date = new Date(transaction.created_at);
+        //   const monthYear = `${date.getMonth() + 1}-${date.getFullYear()}`;
+        //   hashSetDates.add(monthYear);
+        // });
+        // hashSetDates.forEach((date) => {
+        //   const transactionOnDates = transactions?.filter((transaction) => {
+        //     const transactionDate = new Date(transaction.created_at);
+        //     const monthYear = `${
+        //       transactionDate.getMonth() + 1
+        //     }-${transactionDate.getFullYear()}`;
+        //     return monthYear === date;
+        //   });
+        //   const totalValue = transactionOnDates?.reduce(
+        //     (acc, curr) => acc + curr.value,
+        //     0
+        //   );
+        //   console.log(`Date: ${date}, Total Value: ${totalValue}`);
+        // });
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+  await getChartData(transactions!);
   const chartData = transactions?.map((transaction) => ({
     x: transaction.created_at,
     y: transaction.value,
