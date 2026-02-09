@@ -26,7 +26,8 @@ export default async function Page() {
 
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*");
+    .select("*")
+    .order("created_at", { ascending: false });
   const chartData = transactions?.map((transaction) => ({
     x: transaction.created_at,
     y: transaction.value,

@@ -164,7 +164,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
@@ -175,12 +175,12 @@ export function DataTable({ data: initialData }: { data: any[] }) {
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
+    useSensor(KeyboardSensor, {}),
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
-    [data]
+    [data],
   );
 
   async function handleDeleteTransaction(id: number) {
@@ -209,8 +209,8 @@ export function DataTable({ data: initialData }: { data: any[] }) {
             {Number(row.original.type_id) === 1
               ? "Savings"
               : Number(row.original.type_id) === 2
-              ? "Expenses"
-              : "Emergency Savings"}
+                ? "Expenses"
+                : "Emergency Savings"}
           </Badge>
         </div>
       ),
@@ -218,7 +218,15 @@ export function DataTable({ data: initialData }: { data: any[] }) {
     {
       accessorKey: "target",
       header: () => <div className="w-full">Value</div>,
-      cell: ({ row }: any) => <Label>{row.original.value}</Label>,
+      cell: ({ row }: any) => (
+        <Label
+          style={{
+            color: Number(row.original.type_id) === 1 ? "green" : "red",
+          }}
+        >
+          {row.original.value}
+        </Label>
+      ),
       //   <form
       //     onSubmit={(e) => {
       //       e.preventDefault();
@@ -540,7 +548,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -670,7 +678,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -809,7 +817,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -946,7 +954,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
