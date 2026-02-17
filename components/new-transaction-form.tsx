@@ -27,6 +27,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import FormSubmitButton from "./form-submit-button";
 import { Value } from "@radix-ui/react-select";
+import CategoryForm from "./category-form";
 
 export async function NewTransactionForm({
   ...props
@@ -99,10 +100,8 @@ export async function NewTransactionForm({
             {/* <Field>
               <FieldLabel htmlFor="Category">Category</FieldLabel>
               <Input id="Category" type="Category" required />
-              <FieldDescription>
-                Must be at least 8 characters long.
-              </FieldDescription>
             </Field> */}
+            <CategoryForm />
             {/* <Field>
               <FieldLabel htmlFor="confirm-password">
                 Confirm Password
