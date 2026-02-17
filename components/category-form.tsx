@@ -5,36 +5,39 @@ import { Button } from "./ui/button";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@radix-ui/react-select";
-import { SelectItem } from "./ui/select";
+} from "./ui/select";
 import { createClient } from "@/lib/client";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
+import { Category } from "@/app/types/Types";
 
 function CategoryForm() {
-  const [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     //fetch categories from database
     const supabase = createClient();
     const fetchCategories = async () => {
-      const { data, error } = await supabase.from("Category").select("*");
+      const { data: categories, error } = await supabase
+        .from("Category")
+        .select("*");
       if (!error) {
-        console.log(data);
-        // setCategories(data);
+        console.log(categories);
+        setCategories(categories);
       } else {
         toast.error("Failed to fetch categories");
       }
     };
     fetchCategories();
-  }, [categories]);
+  }, []);
 
   const handleAddNewCategory = (e: any) => {
     e.preventDefault();
-    setIsAdding(true);
+    setIsAdding((prev) => !prev);
   };
 
   return (
@@ -43,7 +46,7 @@ function CategoryForm() {
         Category{" "}
         <Button size={"sm"} onClick={handleAddNewCategory}>
           {" "}
-          Add Category
+          {isAdding ? "Cancel" : "Add Category"}
         </Button>
       </FieldLabel>
       {!isAdding ? (
@@ -53,12 +56,12 @@ function CategoryForm() {
           </SelectTrigger>
           <SelectContent>
             {/* //values in select content, get it from database */}
-            {/* {categories.data &&
-            categories.data.map((type: any) => (
-              <SelectItem key={type.value} value={type.value}>
-                {type.value}
-              </SelectItem>
-            ))} */}
+            {categories &&
+              categories.map((type: Category) => (
+                <SelectItem key={type.id} value={type.category}>
+                  {type.category}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       ) : (

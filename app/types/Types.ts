@@ -6,12 +6,6 @@ export interface Transaction {
   user_id: number;
 }
 
-export interface Category {
-  id: number;
-  uid: number;
-  value: string;
-}
-
 export interface TransactionType {
   id: number;
   uid: number;
@@ -22,4 +16,10 @@ export interface User {
   id: number;
   email: string;
   role: string;
+}
+
+export interface Category {
+  id: number;
+  ownerId: number;
+  category: string;
 }

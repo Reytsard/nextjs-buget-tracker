@@ -39,18 +39,42 @@ export async function NewTransactionForm({
     "use server";
     const value = Number(formData.get("value"));
     const typeValue = formData.get("type");
+    const categoryValue = formData.get("Category");
     const supabase = await createClient();
     const { data: type, error: typeError } = await supabase
       .from("types")
       .select("id")
       .eq("value", typeValue)
       .single();
-    const { error } = await supabase.from("transactions").insert({
-      value: value,
-      type_id: type!.id,
-    });
-    if (!error) {
-      redirect("/dashboard?success=transaction-created");
+    const { data: categoryContainingValue, error: categoryError } =
+      await supabase
+        .from("Category")
+        .select("id")
+        .eq("category", categoryValue)
+        .single();
+    if (!categoryError && categoryContainingValue) {
+      const { error } = await supabase.from("transactions").insert({
+        value: value,
+        type_id: type!.id,
+        category_id: categoryContainingValue!.id,
+      });
+      if (!error) {
+        redirect("/dashboard?success=transaction-created");
+      }
+    } else if (!categoryError && !categoryContainingValue) {
+      const { data: newCategory, error: newCategoryError } = await supabase
+        .from("Category")
+        .insert({ category: categoryValue })
+        .select("id")
+        .single();
+      const { error } = await supabase.from("transactions").insert({
+        value: value,
+        type_id: type!.id,
+        category_id: newCategory!.id,
+      });
+      if (!error) {
+        redirect("/dashboard?success=transaction-created");
+      }
     }
   };
 
