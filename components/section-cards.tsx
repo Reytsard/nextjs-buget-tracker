@@ -10,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createClient } from "@/lib/server";
+import { PieChart } from "recharts";
+import { ChartContainer, ChartLegend, ChartLegendContent } from "./ui/chart";
 
 export async function SectionCards() {
   const supabase = await createClient();
@@ -20,7 +22,7 @@ export async function SectionCards() {
 
   const totalpnl = await transactions?.reduce(
     (a: any, b: any) => (b.type_id == 2 ? a - b.value : a + b.value),
-    0
+    0,
   );
 
   const thisMonthsTransactions = transactions?.filter((transaction) => {
@@ -34,8 +36,12 @@ export async function SectionCards() {
 
   const thisMonthsPnL = thisMonthsTransactions?.reduce(
     (a: any, b: any) => (b.type_id == 2 ? a - b.value : a + b.value),
-    0
+    0,
   );
+
+  const chartData = await supabase.from("Category").select("id");
+  console.log("chart data");
+  console.log(chartData);
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -80,25 +86,41 @@ export async function SectionCards() {
             {thisMonthsPnL >= 1
               ? "Positive cash flow this month"
               : thisMonthsPnL === 0
-              ? ""
-              : "Negative cash flow this month"}
+                ? ""
+                : "Negative cash flow this month"}
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Categories Chart</CardDescription>
+          <CardDescription>Monthly Expenses</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            To be Added
+            {/* 
+            Data needed
+            distinct categories
+            total value per category
+
+            Config needed
+            label
+            color
+          */}
+            {/* <ChartContainer config={chartConfig}>
+              <PieChart data={}>
+                <ChartLegend
+                  content={<ChartLegendContent nameKey="browser" />}
+                  className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                />
+              </PieChart>
+            </ChartContainer> */}
           </CardTitle>
           {/* <CardAction>
             <Badge variant="outline">
               <IconTrendingUp />
               +12.5%
             </Badge>
-          </CardAction>*/}
+          </CardAction> */}
         </CardHeader>
-        {/*<CardFooter className="flex-col items-start gap-1.5 text-sm">
+        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Strong user retention <IconTrendingUp className="size-4" />
           </div>
