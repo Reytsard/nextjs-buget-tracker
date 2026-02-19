@@ -39,9 +39,66 @@ export async function SectionCards() {
     0,
   );
 
-  const chartData = await supabase.from("Category").select("id");
-  console.log("chart data");
-  console.log(chartData);
+  if (thisMonthsTransactions) {
+    const distictCategoriesFromTransactions = thisMonthsTransactions.reduce(
+      (acc: any, transaction: any) => {
+        if (
+          transaction.category_id !== null &&
+          !acc.includes(transaction.category_id)
+        ) {
+          return [...acc, transaction.category_id];
+        }
+        return acc;
+      },
+      [-1], //used for other/no category
+    );
+
+    console.log(distictCategoriesFromTransactions);
+    const { data: categories, error: categoriesError } = await supabase
+      .from("Category")
+      .select("*");
+
+    const newChartData: any = {};
+    for (const categoryId of distictCategoriesFromTransactions) {
+      const totalValueForCategory = thisMonthsTransactions.reduce(
+        (acc: any, transaction: any) => {
+          if (transaction.category_id === categoryId) {
+            return acc + transaction.value;
+          }
+        },
+        0,
+      );
+      newChartData[categoryId] = {
+        category: (categories?.find((c) => c.id === categoryId)).category,
+        value: totalValueForCategory,
+      };
+    }
+
+    //returns a chartConfig with name, value and color for each category
+    const chartConfig = Object.values(newChartData).map((item: any) => ({
+      name: item.category,
+      value: item.value,
+      color: randomColor(),
+    }));
+
+    console.log(chartConfig);
+  }
+
+  function randomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  // const chartData = await supabase.from("Category").select("id");
+  // const data1 = await supabase
+  //   .from("transactions")
+  //   .select("value.sum(), category_id");
+  // console.log("chart data");
+  // console.log(data1);
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
