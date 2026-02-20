@@ -59,14 +59,15 @@ export async function SectionCards() {
         [-1], //used for other/no category
       )
       .map((categoryId: number) => {
-        const cat: Category = categories?.filter((c) => {
-          return c.id === categoryId;
-        });
+        const cat: { id: number; category: string } | undefined =
+          categories?.find((c) => {
+            return c.id === categoryId;
+          });
         // console.log(categoryId);
         // console.log(categories);
         return {
           categoryId: categoryId,
-          category: cat.category,
+          category: cat?.category,
         };
       });
 
