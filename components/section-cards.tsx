@@ -104,7 +104,23 @@ export async function SectionCards() {
   }
 
   function mergeData(categories: any, groupedExpenses: any) {
-    const listOfGroupedExpenses = Object.fromEntries(groupedExpenses);
+    let data = [];
+    // console.log(categories);
+    categories.forEach((category: any) => {
+      let x = {};
+      if (category.categoryId === -1) {
+        x = {
+          category: "Others",
+          value: groupedExpenses.get(null),
+        };
+      } else {
+        x = {
+          category: category.category,
+          value: groupedExpenses.get(category.categoryId),
+        };
+      }
+      data.push(x);
+    });
   }
 
   function randomColor() {
