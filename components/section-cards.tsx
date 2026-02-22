@@ -10,11 +10,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createClient } from "@/lib/server";
-import { PieChart } from "recharts";
-import { ChartContainer, ChartLegend, ChartLegendContent } from "./ui/chart";
+import { Pie, PieChart } from "recharts";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+} from "./ui/chart";
 import { Category, Transaction } from "@/app/types/Types";
+import PieChartComponent from "./pie-chart";
 
 export async function SectionCards() {
+  let chartData = [];
+  let chartConfig = {} satisfies ChartConfig;
   const supabase = await createClient();
   const { data: transactions } = await supabase
     .from("transactions")
@@ -72,6 +80,7 @@ export async function SectionCards() {
         return {
           categoryId: categoryId,
           category: cat?.category,
+          fill: randomColor(),
         };
       },
     );
@@ -101,10 +110,20 @@ export async function SectionCards() {
     }
 
     const mergedData = mergeData(mappedCategories, groupedExpenses);
+    const labels = mergedData.reduce((acc: any, item: any) => {
+      acc[item.category] = {
+        label: item.category,
+        color: item.fill,
+      };
+      return acc;
+    }, {});
+
+    chartData = mergedData;
+    chartConfig = labels;
   }
 
   function mergeData(categories: any, groupedExpenses: any) {
-    let data = [];
+    let data: any = [];
     // console.log(categories);
     categories.forEach((category: any) => {
       let x = {};
@@ -121,6 +140,7 @@ export async function SectionCards() {
       }
       data.push(x);
     });
+    return data;
   }
 
   function randomColor() {
@@ -131,13 +151,6 @@ export async function SectionCards() {
     }
     return color;
   }
-
-  // const chartData = await supabase.from("Category").select("id");
-  // const data1 = await supabase
-  //   .from("transactions")
-  //   .select("value.sum(), category_id");
-  // console.log("chart data");
-  // console.log(data1);
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -200,14 +213,7 @@ export async function SectionCards() {
             label
             color
           */}
-            {/* <ChartContainer config={chartConfig}>
-              <PieChart data={}>
-                <ChartLegend
-                  content={<ChartLegendContent nameKey="browser" />}
-                  className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
-                />
-              </PieChart>
-            </ChartContainer> */}
+            <PieChartComponent data={chartData} config={chartConfig} />
           </CardTitle>
           {/* <CardAction>
             <Badge variant="outline">
