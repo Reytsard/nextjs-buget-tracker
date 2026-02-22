@@ -12,7 +12,7 @@ import {
 import { createClient } from "@/lib/server";
 import { PieChart } from "recharts";
 import { ChartContainer, ChartLegend, ChartLegendContent } from "./ui/chart";
-import { Category } from "@/app/types/Types";
+import { Category, Transaction } from "@/app/types/Types";
 
 export async function SectionCards() {
   const supabase = await createClient();
@@ -45,63 +45,66 @@ export async function SectionCards() {
       .from("Category")
       .select("id, category");
 
-    const distictCategoriesFromTransactions = thisMonthsTransactions
-      .reduce(
-        (acc: any, transaction: any) => {
-          if (
-            transaction.category_id !== null &&
-            !acc.includes(transaction.category_id)
-          ) {
-            return [...acc, transaction.category_id];
-          }
-          return acc;
-        },
-        [-1], //used for other/no category
-      )
-      .map((categoryId: number) => {
+    const distictCategoriesFromTransactions = thisMonthsTransactions.reduce(
+      (acc: any, transaction: any) => {
+        if (
+          transaction.category_id !== null &&
+          !acc.includes(transaction.category_id)
+        ) {
+          return [...acc, transaction.category_id];
+        }
+        return acc;
+      },
+      [-1], //used for other/no category
+    );
+    const mappedCategories = distictCategoriesFromTransactions.map(
+      (categoryId: number) => {
+        if (categoryId === -1) {
+          return {
+            categoryId: categoryId,
+            category: "Others",
+          };
+        }
         const cat: { id: number; category: string } | undefined =
           categories?.find((c) => {
             return c.id === categoryId;
           });
-        // console.log(categoryId);
-        // console.log(categories);
         return {
           categoryId: categoryId,
           category: cat?.category,
         };
-      });
+      },
+    );
 
-    // const newChartData: any = {};
-    // const categoriesArr = [];
+    //group/map transactions by category_id
+    const grouped = new Map();
+    for (const transaction of thisMonthsTransactions) {
+      const catId = transaction.category_id;
+      if (!grouped.has(transaction.category_id)) {
+        grouped.set(catId, [transaction]);
+      }
+      grouped.get(catId).push(transaction);
+    }
 
-    // for (const categoryId of distictCategoriesFromTransactions) {
-    //   const totalValueForCategory = thisMonthsTransactions.reduce(
-    //     (acc: any, transaction: any) => {
-    //       if (transaction.category_id === categoryId) {
-    //         return acc + transaction.value;
-    //       }
-    //     },
-    //     0,
-    //   );
-    // }
+    const groupedExpenses = new Map();
+    for (const [catId, transactions] of grouped) {
+      const total = transactions.reduce(
+        (sum: number, transaction: Transaction) => {
+          if (transaction.type_id === 2) {
+            return (sum += transaction.value);
+          }
+          return sum;
+        },
+        0,
+      );
+      groupedExpenses.set(catId, total);
+    }
 
-    // newChartData[categoryId] = {
-    //   category: (categories?.find((c) => {
-    //     console.log(categoryId);
-    //     console.log("c", c);
-    //     return c.id === categoryId;
-    //   })).category,
-    //   value: totalValueForCategory,
-    // };
+    const mergedData = mergeData(mappedCategories, groupedExpenses);
+  }
 
-    //returns a chartConfig with name, value and color for each category
-    // const chartConfig = Object.values(newChartData).map((item: any) => ({
-    //   name: item.category,
-    //   value: item.value,
-    //   color: randomColor(),
-    // }));
-
-    // console.log(chartConfig);
+  function mergeData(categories: any, groupedExpenses: any) {
+    const listOfGroupedExpenses = Object.fromEntries(groupedExpenses);
   }
 
   function randomColor() {

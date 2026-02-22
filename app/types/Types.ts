@@ -4,6 +4,7 @@ export interface Transaction {
   category_id: number;
   type_id: number;
   user_id: number;
+  value: number;
 }
 
 export interface TransactionType {
