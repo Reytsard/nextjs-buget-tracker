@@ -12,7 +12,7 @@ function PieChartComponent({ data, config }: any) {
   return (
     <ChartContainer
       config={config}
-      className="mx-auto aspect-square max-h-[300px]"
+      className="mx-auto aspect-square max-h-[160px]"
     >
       <PieChart>
         <Pie data={data} dataKey="value">
