@@ -131,11 +131,13 @@ export async function SectionCards() {
         x = {
           category: "Others",
           value: groupedExpenses.get(null),
+          fill: category.fill || randomColor(),
         };
       } else {
         x = {
           category: category.category,
           value: groupedExpenses.get(category.categoryId),
+          fill: category.fill || randomColor(),
         };
       }
       data.push(x);

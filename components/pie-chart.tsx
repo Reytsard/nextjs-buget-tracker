@@ -15,11 +15,11 @@ function PieChartComponent({ data, config }: any) {
       className="mx-auto aspect-square max-h-[160px]"
     >
       <PieChart>
-        <Pie data={data} dataKey="value">
-          {data.map((_: any, index: any) => (
+        <Pie data={data} dataKey="value" nameKey="category">
+          {data.map((item: any, index: any) => (
             <Cell
               key={index}
-              fill={`hsl(${(index * 360) / data.length}, 70%, 50%)`}
+              fill={item.fill || `hsl(${(index * 360) / data.length}, 70%, 50%)`}
             />
           ))}
         </Pie>
