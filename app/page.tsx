@@ -1,14 +1,13 @@
-import { createClient } from "@/lib/server";
-import Image from "next/image";
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 
-export default async function Home() {
-  const supabase = await createClient();
+import { LandingPage } from "@/components/landing-page";
 
-  const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  } else {
-    redirect("/dashboard");
-  }
+export const metadata: Metadata = {
+  title: "Budget Track | Simple personal budget tracking",
+  description:
+    "Track expenses, understand spending, and build healthier money habits with Budget Track.",
+};
+
+export default function Home() {
+  return <LandingPage />;
 }
