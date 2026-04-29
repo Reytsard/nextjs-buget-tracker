@@ -45,7 +45,6 @@ function CategoryForm() {
       <FieldLabel htmlFor="Category">
         Category{" "}
         <Button size={"sm"} onClick={handleAddNewCategory}>
-          {" "}
           {isAdding ? "Cancel" : "Add Category"}
         </Button>
       </FieldLabel>
@@ -55,25 +54,24 @@ function CategoryForm() {
             <SelectValue placeholder="Select Category" />
           </SelectTrigger>
           <SelectContent>
-            {/* //values in select content, get it from database */}
             {categories &&
               categories.map((type: Category) => (
                 <SelectItem key={type.id} value={type.category}>
                   {type.category}
                 </SelectItem>
               ))}
+            <SelectItem value="Other">Other</SelectItem>
           </SelectContent>
         </Select>
       ) : (
-        <Field>
-          <FieldLabel htmlFor="newCategory">New Category</FieldLabel>
-          <Input
-            id="newCategory"
-            name="newCategory"
-            type="text"
-            placeholder="New Category"
-          />
-        </Field>
+        <Input
+          id="Category"
+          name="Category"
+          type="text"
+          placeholder="Enter new category name"
+          required
+          autoFocus
+        />
       )}
     </Field>
   );

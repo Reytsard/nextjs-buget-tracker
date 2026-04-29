@@ -51,7 +51,7 @@ export async function NewTransactionForm({
         .from("Category")
         .select("id")
         .eq("category", categoryValue)
-        .single();
+        .maybeSingle();
     if (!categoryError && categoryContainingValue) {
       const { error } = await supabase.from("transactions").insert({
         value: value,
