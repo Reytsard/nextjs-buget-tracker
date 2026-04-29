@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(supabase --version)",
+      "Bash(npx supabase *)",
+      "Bash(SUPABASE_DB_PASSWORD=LgVj2zsjRxDZsFMF npx supabase migration up --linked)",
+      "Bash(SUPABASE_DB_PASSWORD=LgVj2zsjRxDZsFMF npx supabase db push --linked)",
+      "Bash(SUPABASE_DB_PASSWORD=OnlqpClCNneZZ0ui npx supabase migration up --linked)",
+      "Bash(Get-Content \"C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--budget-tracking-app-nextjs-budget-track\\\\b420e7ab-11fa-4053-9d0e-16a8892ee772\\\\tasks\\\\bjxj2o7rg.output\" -Wait)",
+      "Bash(Select-String -Pattern \".\")"
+    ]
+  }
+}

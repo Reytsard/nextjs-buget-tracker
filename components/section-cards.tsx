@@ -48,6 +48,18 @@ export async function SectionCards() {
     0,
   );
 
+  const monthlySavings = thisMonthsTransactions?.reduce(
+    (a: number, b: any) => (b.type_id !== 2 ? a + b.value : a),
+    0
+  ) ?? 0;
+  const monthlyExpenses = thisMonthsTransactions?.reduce(
+    (a: number, b: any) => (b.type_id === 2 ? a + b.value : a),
+    0
+  ) ?? 0;
+  const savingsRate = monthlySavings + monthlyExpenses > 0
+    ? Math.round((monthlySavings / (monthlySavings + monthlyExpenses)) * 100)
+    : 0;
+
   if (thisMonthsTransactions) {
     const { data: categories, error: categoriesError } = await supabase
       .from("Category")
@@ -80,7 +92,7 @@ export async function SectionCards() {
         return {
           categoryId: categoryId,
           category: cat?.category,
-          fill: randomColor(),
+          fill: deterministicColor(cat?.category ?? String(categoryId)),
         };
       },
     );
@@ -143,13 +155,14 @@ export async function SectionCards() {
     return data;
   }
 
-  function randomColor() {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+  function deterministicColor(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      hash |= 0;
     }
-    return color;
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 65%, 55%)`;
   }
 
   return (
@@ -231,23 +244,23 @@ export async function SectionCards() {
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Savings/Expenses</CardDescription>
-          {/* <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            4.5%
+          <CardDescription>This Month Savings / Expenses</CardDescription>
+          <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+            <span style={{ color: "green" }}>+{monthlySavings.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
+            {" / "}
+            <span style={{ color: "red" }}>-{monthlyExpenses.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
-              <IconTrendingUp />
-              +4.5%
+              {savingsRate}% saved
             </Badge>
-          </CardAction> */}
+          </CardAction>
         </CardHeader>
-        {/* <CardFooter className="flex-col items-start gap-1.5 text-sm">
-          <div className="line-clamp-1 flex gap-2 font-medium">
-            Steady performance increase <IconTrendingUp className="size-4" />
+        <CardFooter className="flex-col items-start gap-1.5 text-sm">
+          <div className="text-muted-foreground">
+            Savings rate this month
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
-        </CardFooter> */}
+        </CardFooter>
       </Card>
     </div>
   );

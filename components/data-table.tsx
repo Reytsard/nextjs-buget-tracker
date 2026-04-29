@@ -28,6 +28,7 @@ import {
   IconChevronsRight,
   IconCircleCheckFilled,
   IconDotsVertical,
+  IconDownload,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
@@ -101,7 +102,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/lib/client";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FormEventHandler } from "react";
 
 export const schema = z.object({
@@ -160,6 +161,8 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 
 export function DataTable({ data: initialData }: { data: any[] }) {
   const [data, setData] = React.useState(() => initialData);
+  const [activeTab, setActiveTab] = React.useState("all");
+  const router = useRouter();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -224,7 +227,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
             color: Number(row.original.type_id) === 1 ? "green" : "red",
           }}
         >
-          {row.original.value}
+          {row.original.value.toLocaleString("en-US", { style: "currency", currency: "USD" })}
         </Label>
       ),
       //   <form
@@ -305,7 +308,7 @@ export function DataTable({ data: initialData }: { data: any[] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem onClick={() => redirect(newURL)}>
+              <DropdownMenuItem onClick={() => router.push(newURL)}>
                 Edit
               </DropdownMenuItem>
               {/* <DropdownMenuItem>Make a copy</DropdownMenuItem>
@@ -438,17 +441,35 @@ export function DataTable({ data: initialData }: { data: any[] }) {
     }
   }
 
-  const handleTabListChange = (e: any) => {
-    console.log(e);
-  };
+  const handleTabListChange = (val: string) => setActiveTab(val);
+
+  function exportToCSV() {
+    const headers = ["Date", "Type", "Category ID", "Value"];
+    const typeLabel = (type_id: number) =>
+      type_id === 1 ? "Savings" : type_id === 2 ? "Expenses" : "Emergency Savings";
+    const rows = data.map((row) => [
+      new Date(row.created_at).toLocaleDateString("en-US"),
+      typeLabel(Number(row.type_id)),
+      row.category ?? "",
+      row.value,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `transactions-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
-    <Tabs defaultValue="all" className="w-full flex-col justify-start gap-6">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
-        <Select defaultValue="all" onValueChange={handleTabListChange}>
+        <Select value={activeTab} onValueChange={handleTabListChange}>
           <SelectTrigger
             className="flex w-fit @4xl/main:hidden"
             size="sm"
@@ -458,9 +479,9 @@ export function DataTable({ data: initialData }: { data: any[] }) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Outline</SelectItem>
-            <SelectItem value="Savings">Savings</SelectItem>
-            <SelectItem value="Expenses">Expenses</SelectItem>
-            <SelectItem value="Emergency Savings">Emergency Savings</SelectItem>
+            <SelectItem value="1">Savings</SelectItem>
+            <SelectItem value="2">Expenses</SelectItem>
+            <SelectItem value="3">Emergency Savings</SelectItem>
           </SelectContent>
         </Select>
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
@@ -484,6 +505,10 @@ export function DataTable({ data: initialData }: { data: any[] }) {
             </Badge>
           </TabsTrigger>
         </TabsList>
+        <Button variant="outline" size="sm" onClick={exportToCSV}>
+          <IconDownload className="size-4 mr-1" />
+          Export CSV
+        </Button>
         {/* <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -528,7 +553,6 @@ export function DataTable({ data: initialData }: { data: any[] }) {
         value="all"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        buh
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}

@@ -35,10 +35,10 @@ export default async function Page() {
   }));
   const savingsData = chartData
     ?.filter((item) => item.type === 1)
-    .map((item: any) => ({ x: item.created_at, y: item.value }));
+    .map((item) => ({ x: item.x, y: item.y }));
   const expenseData = chartData
     ?.filter((item) => item.type === 2)
-    .map((item: any) => ({ x: item.created_at, y: item.value }));
+    .map((item) => ({ x: item.x, y: item.y }));
 
   return (
     <SidebarProvider
@@ -56,9 +56,9 @@ export default async function Page() {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <SectionCards />
-              {/* <div className="px-4 lg:px-6">
-                <ChartAreaInteractive data={chartAreaData} />
-              </div> */}
+              <div className="px-4 lg:px-6">
+                <ChartAreaInteractive data={{ savings: savingsData ?? [], expenses: expenseData ?? [] }} />
+              </div>
               <DataTable data={transactions!} />
             </div>
           </div>
