@@ -161,8 +161,7 @@ export async function SectionCards() {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
       hash |= 0;
     }
-    const hue = Math.abs(hash) % 360;
-    return `hsl(${hue}, 65%, 55%)`;
+    return `var(--chart-${(Math.abs(hash) % 8) + 1})`;
   }
 
   return (
@@ -246,9 +245,9 @@ export async function SectionCards() {
         <CardHeader>
           <CardDescription>This Month Savings / Expenses</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            <span style={{ color: "green" }}>+{monthlySavings.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
+            <span style={{ color: "var(--income)" }}>+{monthlySavings.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
             {" / "}
-            <span style={{ color: "red" }}>-{monthlyExpenses.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
+            <span style={{ color: "var(--expense)" }}>-{monthlyExpenses.toLocaleString("en-US", { style: "currency", currency: "USD" })}</span>
           </CardTitle>
           <CardAction>
             <Badge variant="outline">

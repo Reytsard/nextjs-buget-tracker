@@ -40,6 +40,7 @@ export async function NewTransactionForm({
     const value = Number(formData.get("value"));
     const typeValue = formData.get("type");
     const categoryValue = formData.get("Category");
+    const description = (formData.get("description") as string) || null;
     const supabase = await createClient();
     const { data: type, error: typeError } = await supabase
       .from("types")
@@ -57,6 +58,7 @@ export async function NewTransactionForm({
         value: value,
         type_id: type!.id,
         category_id: categoryContainingValue!.id,
+        description,
       });
       if (!error) {
         redirect("/dashboard?success=transaction-created");
@@ -71,6 +73,7 @@ export async function NewTransactionForm({
         value: value,
         type_id: type!.id,
         category_id: newCategory!.id,
+        description,
       });
       if (!error) {
         redirect("/dashboard?success=transaction-created");
@@ -126,13 +129,15 @@ export async function NewTransactionForm({
               <Input id="Category" type="Category" required />
             </Field> */}
             <CategoryForm />
-            {/* <Field>
-              <FieldLabel htmlFor="confirm-password">
-                Confirm Password
-              </FieldLabel>
-              <Input id="confirm-password" type="password" required />
-              <FieldDescription>Please confirm your password.</FieldDescription>
-            </Field> */}
+            <Field>
+              <FieldLabel htmlFor="description">Description</FieldLabel>
+              <Input
+                id="description"
+                name="description"
+                type="text"
+                placeholder="Optional note..."
+              />
+            </Field>
             <FieldGroup>
               <Field>
                 <FormSubmitButton />

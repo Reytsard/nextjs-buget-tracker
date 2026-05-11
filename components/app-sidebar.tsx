@@ -7,6 +7,7 @@ import {
   IconHelp,
   IconInnerShadowTop,
   IconRefresh,
+  IconReportAnalytics,
   IconSearch,
   IconSettings,
   IconTarget,
@@ -36,7 +37,7 @@ const data = {
   },
   navMain: [
     { title: "Dashboard", url: "/dashboard", icon: IconDashboard },
-    { title: "Analytics", url: "/analytics", icon: IconChartBar },
+    { title: "Reports", url: "/reports", icon: IconReportAnalytics },
     { title: "Budget", url: "/budget", icon: IconTarget },
     { title: "Recurring", url: "/recurring", icon: IconRefresh },
     { title: "Import", url: "/import", icon: IconUpload },

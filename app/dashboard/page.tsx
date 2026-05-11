@@ -4,13 +4,17 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TransactionSearch } from "@/components/transaction-search";
 
-import data1 from "./data.json";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/server";
 import { DashboardToast } from "@/components/dashboard-toast";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getClaims();
@@ -24,11 +28,27 @@ export default async function Page() {
     avatar: data?.claims.user_avatar || "",
   };
 
-  const { data: transactions } = await supabase
+  const { q } = await searchParams;
+
+  // Full dataset for chart (unfiltered)
+  const { data: allTransactions } = await supabase
     .from("transactions")
     .select("*")
     .order("created_at", { ascending: false });
-  const chartData = transactions?.map((transaction) => ({
+
+  // Filtered dataset for table
+  let query = supabase
+    .from("transactions")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (q) {
+    query = query.ilike("description", `%${q}%`);
+  }
+
+  const { data: transactions } = await query;
+
+  const chartData = allTransactions?.map((transaction) => ({
     x: transaction.created_at,
     y: transaction.value,
     type: transaction.type_id,
@@ -58,6 +78,9 @@ export default async function Page() {
               <SectionCards />
               <div className="px-4 lg:px-6">
                 <ChartAreaInteractive data={{ savings: savingsData ?? [], expenses: expenseData ?? [] }} />
+              </div>
+              <div className="flex items-center justify-end px-4 lg:px-6">
+                <TransactionSearch initial={q} />
               </div>
               <DataTable data={transactions!} />
             </div>

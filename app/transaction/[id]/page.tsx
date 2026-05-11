@@ -62,6 +62,7 @@ export default async function Page({
     const value = Number(formData.get("value"));
     const typeValue = formData.get("type") as string;
     const categoryValue = formData.get("Category") as string;
+    const description = (formData.get("description") as string) || null;
 
     const supabase = await createClient();
 
@@ -89,6 +90,7 @@ export default async function Page({
           value,
           type_id: type.id,
           category_id: categoryContainingValue.id,
+          description,
         })
         .eq("id", id);
       if (!error) {
@@ -109,6 +111,7 @@ export default async function Page({
           value,
           type_id: type.id,
           category_id: newCategory.id,
+          description,
         })
         .eq("id", id);
       if (!error) {
@@ -199,6 +202,16 @@ export default async function Page({
                               ))}
                           </SelectContent>
                         </Select>
+                      </Field>
+                      <Field>
+                        <FieldLabel htmlFor="description">Description</FieldLabel>
+                        <Input
+                          id="description"
+                          name="description"
+                          type="text"
+                          placeholder="Optional note..."
+                          defaultValue={transaction.description ?? ""}
+                        />
                       </Field>
                       <FieldGroup>
                         <Field>

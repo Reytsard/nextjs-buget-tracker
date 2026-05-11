@@ -252,6 +252,15 @@ export function DataTable({ data: initialData }: { data: any[] }) {
       // ),
     },
     {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }: any) => (
+        <span className="max-w-[180px] truncate block text-muted-foreground text-sm">
+          {row.original.description ?? "—"}
+        </span>
+      ),
+    },
+    {
       accessorKey: "reviewer",
       header: "Date",
       cell: ({ row }) => {
@@ -443,18 +452,27 @@ export function DataTable({ data: initialData }: { data: any[] }) {
 
   const handleTabListChange = (val: string) => setActiveTab(val);
 
+  function escapeCSV(value: string | number | null | undefined): string {
+    const str = String(value ?? "");
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
   function exportToCSV() {
-    const headers = ["Date", "Type", "Category ID", "Value"];
     const typeLabel = (type_id: number) =>
       type_id === 1 ? "Savings" : type_id === 2 ? "Expenses" : "Emergency Savings";
-    const rows = data.map((row) => [
-      new Date(row.created_at).toLocaleDateString("en-US"),
-      typeLabel(Number(row.type_id)),
-      row.category ?? "",
-      row.value,
+    const visibleRows = table.getFilteredRowModel().rows.map((r) => r.original);
+    const headers = ["Date", "Type", "Value", "Description"];
+    const rows = visibleRows.map((row) => [
+      escapeCSV(new Date(row.created_at).toLocaleDateString("en-US")),
+      escapeCSV(typeLabel(Number(row.type_id))),
+      escapeCSV(row.value),
+      escapeCSV(row.description),
     ]);
-    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
+    const csv = "﻿" + [headers.map(escapeCSV), ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;

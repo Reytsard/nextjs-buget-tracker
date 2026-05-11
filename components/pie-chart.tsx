@@ -16,10 +16,12 @@ function PieChartComponent({ data, config }: any) {
     >
       <PieChart>
         <Pie data={data} dataKey="value">
-          {data.map((_: any, index: any) => (
+          {data.map((item: any, index: number) => (
             <Cell
               key={index}
-              fill={`hsl(${(index * 360) / data.length}, 70%, 50%)`}
+              style={{
+                fill: config[item.category]?.color || `var(--chart-${(index % 8) + 1})`,
+              }}
             />
           ))}
         </Pie>

@@ -5,6 +5,7 @@ export interface Transaction {
   type_id: number;
   user_id: number;
   value: number;
+  description: string | null;
 }
 
 export interface TransactionType {
